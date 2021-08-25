@@ -4,7 +4,7 @@ export interface AsyncStorage {
   }
   getItem<T>(key: string): Promise<T>
   setItem<T>(key: string, data: T): Promise<T>
-  removeItem(key: string): Promise<void>
+  removeItem<T>(key: string): Promise<T>
 }
 
 /**
