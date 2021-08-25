@@ -1,12 +1,6 @@
-import { AsyncStorage } from '../types/storage'
-import { KVStorage } from './storage';
+import { AsyncStorage } from '../types/storage';
 
-export class CloudflareKVStorage<S> implements AsyncStorage<S> {
-  public getItem(key: string): Promise<T>
-
-  public setItem(key: string, data: T): Promise<T>
-
-  public removeItem(key: string): Promise<T>
+export class CloudflareKVStorage implements AsyncStorage {
 
   private defaultData = { todos: [] }
 
@@ -17,58 +11,53 @@ export class CloudflareKVStorage<S> implements AsyncStorage<S> {
   private removeCache = (key: string) => KV_DATABASE.delete(key)
 
   public constructor() {
-    this.getItem = this.get;
-    this.setItem = this.set;
+    this.removeItem = this.delete;
   }
 
-  async get(key: string) {
+  async getItem<T>(key: string): Promise<T> {
     const cache = await this.getCache(key);
 
     if (!cache) {
       await this.setCache(key, JSON.stringify(this.defaultData));
       const data = this.defaultData;
       const body = JSON.stringify(data || []);
-      return new Response(body, {
-        headers: { 'Content-Type': 'text/html' },
-      });
+      return body;
     }
     const data = JSON.parse(cache);
     const body = JSON.stringify(data || []);
-    return new Response(body, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+    return body;
   }
 
-  async set(key: string, data: T) {
+  async setItem<T>(key: string, data: T): Promise<T> {
     try {
       JSON.parse(key);
       await this.setCache(key, data);
-      return new Response(data, { status: 200 });
+      return data;
     } catch (err) {
-      return new Response(err, { status: 500 });
+      return data;
     }
   }
 
-  async delete(key: string) {
+  async removeItem(key: string): Promise<Void> {
     try {
       JSON.parse(key);
       await this.removeCache(key);
-      return new Response(key, { status: 200 });
     } catch (err) {
-      return new Response(err, { status: 500 });
     }
   }
 
-  async handleRequest(request: Request) {
-    const value = await NAMESPACE.get("first-key")
-    if (value === null) {
-      return new Response("Value not found", {status: 404})
-    }
   
-    return new Response(value)
-  }
 }
 
+async handleRequest(request: Request) {
+  const value = await NAMESPACE.get("first-key");
+  if (value === null) {
+    return new Response("Value not found", {status: 404});
+  }
+
+  return new Response(value)
+};
+
 addEventListener("fetch", (event: any) => {
-  event.respondWith(this.handleRequest(event.request))
+  event.respondWith(handleRequest(event.request));
 });
