@@ -31,8 +31,6 @@ export const useLoadBalancing: Middleware = async (
     validateUpstream(upstreamOptions);
   }
 
-  const algo = options.loadbalancing || 'random';
-
   const upstream = Array.isArray(upstreamOptions) ? upstreamOptions : [upstreamOptions];
   const ipString = context.request.headers.get('cf-connecting-ip');
   if (ipString === null) {
