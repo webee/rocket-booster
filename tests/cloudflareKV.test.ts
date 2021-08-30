@@ -48,9 +48,10 @@ test('storage.ts -> getItem()', async () => {
   expect(await kvStorage.getItem('key')).toBe(12345);
 });
 
-test('storage.ts -> getItem()', async () => {
+test('storage.ts -> removeItem()', async () => {
   expect(await kvStorage.setItem('key', 12345)).toBeTruthy();
   expect(await kvStorage.getItem('key')).toBe(12345);
   expect(await kvStorage.removeItem('key')).toBeTruthy();
+  expect(await kvStorage.removeItem('key')).toBeFalsy();
   expect(await kvStorage.getItem('key')).toBe(undefined);
 });
