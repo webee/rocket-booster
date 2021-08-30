@@ -1,9 +1,12 @@
 import { AsyncStorage } from '../types/storage';
 
+// Mocking: Remove this line in production
+import DATABASE from '../tests/cloudflareKV.test';
+
 export class CloudflareKVStorage implements AsyncStorage {
   private defaultData = {}
 
-  private setCache = <T>(key: string, data: T) => DATABASE.put(key, data)
+  private setCache = (key: string, data: string) => DATABASE.put(key, data)
 
   private getCache = (key: string) => DATABASE.get(key)
 
@@ -11,10 +14,12 @@ export class CloudflareKVStorage implements AsyncStorage {
 
   async getItem<T>(key: string): Promise<T | undefined> {
     const cache = await this.getCache(key);
-    if (!cache) {
+    // console.log(cache);
+    if (cache === undefined) {
       await this.setCache(key, JSON.stringify(this.defaultData));
       return undefined;
     }
+    console.log(JSON.parse(cache));
     return JSON.parse(cache);
   }
 
