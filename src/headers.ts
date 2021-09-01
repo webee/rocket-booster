@@ -50,6 +50,7 @@ export const useRequestHeaders: Middleware = (
     body: request.body,
     method: request.method,
     headers,
+    redirect: request.redirect,
   });
   return next();
 };

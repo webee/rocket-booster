@@ -13,6 +13,7 @@ export const cloneRequest = (
     body: request.body,
     method: request.method,
     headers: request.headers,
+    redirect: request.redirect,
   };
 
   if (optimization !== undefined) {
