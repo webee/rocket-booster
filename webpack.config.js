@@ -11,7 +11,7 @@ module.exports = {
     filename: 'index.js',
     path: path.join(__dirname, 'dist'),
     library: {
-      name: '@webee/rocket-booster',
+      name: '@magetd/rocket-booster',
       type: 'umd',
     },
   },
